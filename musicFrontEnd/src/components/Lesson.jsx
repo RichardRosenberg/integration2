@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
+import { jwtDecode } from "jwt-decode";
 
-const Lesson = () => {
+const Lesson = ({ token }) => {
   const [title, setName] = useState("");
   const [date, setDate] = useState();
   const [lessons, setLessons] = useState([]);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [updatedLessonData, setUpdatedLessonData] = useState({
     id: 0,
     title: "",
     start: "",
   });
+  const [isTeacher, setIsTeacher] = useState(false);
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -113,20 +120,39 @@ const Lesson = () => {
     setShowUpdateModal((prevState) => !prevState);
   };
 
+  // Decoding the token and extracting user roles
+  useEffect(() => {
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const decodedRoles = decodedToken.roles || [];
+        const isTeacher = decodedRoles.includes("ROLE_TEACHER");
+        console.log("isTeacher:", isTeacher); // Console log to show the value of isTeacher
+        setIsTeacher(isTeacher);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, [token]);
+
   return (
     <div>
-      <h1>Add Lesson</h1>
-      <form>
-        <input
-          type="text"
-          value={title}
-          onChange={handleNameChange}
-          placeholder="Lesson Name"
-        />
-        <br />
-        <input type="date" value={date} onChange={handleDateChange} />
-        <input type="submit" value="Submit" onClick={handleSubmit} />
-      </form>
+      {isTeacher && (
+        <div>
+          <h1>Add Lesson</h1>
+          <form>
+            <input
+              type="text"
+              value={title}
+              onChange={handleNameChange}
+              placeholder="Lesson Name"
+            />
+            <br />
+            <input type="date" value={date} onChange={handleDateChange} />
+            <input type="submit" value="Submit" onClick={handleSubmit} />
+          </form>
+        </div>
+      )}
       <h1>Lessons</h1>
       <div>
         {lessons.map((lesson) => (

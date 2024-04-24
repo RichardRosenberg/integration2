@@ -13,7 +13,6 @@ import RegisterStudentForm from './components/RegisterForm/RegisterStudentForm';
 import RegisterTeacherForm from './components/RegisterForm/RegisterTeacherForm';
 import { jwtDecode } from "jwt-decode";
 
-import Lessons from './components/lessons';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -22,7 +21,9 @@ function App() {
   const [showRegisterTeacher, setShowRegisterTeacher] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
-  const [roles, setRoles] = useState([]); // State for roles
+  const [roles, setRoles] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [token, setToken] = useState("");
 
   // Function to toggle login form visibility
   const toggleLoginForm = () => {
@@ -51,43 +52,60 @@ function App() {
     console.log("Received token:", token);
     
     try {
-      // Decode the JWT token to extract the username and roles
+      // Decode the JWT token to extract the username, roles, and userId
       const decodedToken = jwtDecode(token);
-      console.log("Decoded token:", decodedToken);
-      // Extract the username and roles from the decoded token
-      const decodedUsername = decodedToken.sub;
-      const decodedRoles = decodedToken.roles || []; // Ensure roles is an array
 
-      // Set the username and roles in the state
+      // Log the decoded token
+      console.log("Decoded token:", decodedToken);
+
+      // Extract the username, roles, and userId from the decoded token
+      const decodedUsername = decodedToken.sub;
+      const decodedRoles = decodedToken.roles || [];
+      const decodedUserId = decodedToken.userId;
+
+      // Set the username, roles, and userId in the state
       setUsername(decodedUsername);
       setRoles(decodedRoles);
-      setShowLogin(false);
+      setUserId(decodedUserId);
+      setToken(token);
       setLoggedIn(true);
+      setShowLogin(false);
     } catch (error) {
       console.error("Error decoding token:", error);
     }
   };
 
-
   // Callback function to be called after logout
   const handleLogout = () => {
     setUsername(""); 
+    setRoles([]); 
+    setUserId(""); 
     setLoggedIn(false); 
-    setRoles([]); // Reset roles on logout
+    setToken(""); 
     localStorage.removeItem('token');
     window.location.reload();
   };
 
-  // Log the username after it's updated
+  // Log the username, roles, and userId after they're updated
   useEffect(() => {
-    console.log("username in useEffect: " + username);
-  }, [username]);
+    console.log("username in useEffect:", username);
+    console.log("roles in useEffect:", roles);
+    console.log("userId in useEffect:", userId);
+    console.log("token in useEffect:", token);
+  }, [username, roles, userId, token]);
 
   return (
-    document.title="Music Academy",
     <div>
       <Navbar toggleLoginForm={toggleLoginForm} loggedIn={loggedIn} handleLogout={handleLogout} /> 
-      <Hero toggleRegisterStudentForm={toggleRegisterStudentForm} toggleRegisterTeacherForm={toggleRegisterTeacherForm} loggedIn={loggedIn} username={username} roles={roles} /> {/* Pass roles as a prop */}
+      <Hero 
+        loggedIn={loggedIn} 
+        username={username} 
+        roles={roles} 
+        userId={userId} 
+        toggleRegisterStudentForm={toggleRegisterStudentForm} 
+        toggleRegisterTeacherForm={toggleRegisterTeacherForm} 
+        token={token} 
+      />
       <div className="container">
         <Title title="Instruments" />
         <Instruments />

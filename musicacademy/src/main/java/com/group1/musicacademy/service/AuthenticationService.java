@@ -78,7 +78,8 @@ public class AuthenticationService {
         // or we can use a pre-existing role object like from a service or repository and then add it to the user's role list
         // Role userRole = ***
         // user.addRole(userRole);
-        repository.save(user);
+//        repository.save(user);
+        user.setId(repository.save(user).getId());
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
@@ -145,7 +146,7 @@ public class AuthenticationService {
         }
     }
 
-//    @Override
+    //    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<MyUser> userOptional = repository.findByUsername(username);
         MyUser user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));

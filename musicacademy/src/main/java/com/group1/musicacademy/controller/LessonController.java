@@ -45,7 +45,7 @@ public class LessonController {
 
             existingLesson.setName(updatedLesson.getName());
             existingLesson.setStart(updatedLesson.getStart());
-            lessonService.saveLesson(existingLesson); // Save the updated lesson
+            lessonService.saveLesson(existingLesson); 
             return ("Lesson with id " + id + " is updated");
 
     }

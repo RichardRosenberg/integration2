@@ -1,5 +1,7 @@
 package com.group1.musicacademy.service;
 
+import com.group1.musicacademy.model.MyUser;
+import com.group1.musicacademy.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -7,20 +9,22 @@ import io.jsonwebtoken.security.Keys;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
+    private final UserRepository repository;
+
+    public JwtService(UserRepository userRepository) {
+        this.repository = userRepository;
+    }
 
     private static final String SECRET_KEY = "30416718e66acd5fa664cb0652bedd27898fd8a7a355b51bd4deed1984b14d8b";
 
@@ -46,7 +50,15 @@ public class JwtService {
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         List<String> userRoles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
+        Optional<MyUser> userOptional = repository.findByUsername(userDetails.getUsername());
+        MyUser user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        int userId = user.getId();
+
         extraClaims.put("roles", userRoles);
+
+        extraClaims.put("userId", userId);
+
+
         return Jwts.builder()
                 .claims()
                 .add(extraClaims)
