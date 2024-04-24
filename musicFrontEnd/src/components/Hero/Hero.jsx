@@ -2,24 +2,7 @@ import React from 'react';
 import './Hero.css';
 import dark_arrow from '../../assets/dark-arrow.png';
 
-const Hero = ({ toggleRegisterStudentForm, toggleRegisterTeacherForm, loggedIn, username, role }) => {
-  // Message for logged-in student
-  const studentMessage = (
-    <div>
-      <h1>Welcome {username}!</h1>
-      <p>Please check out lessons and your calendar.</p>
-    </div>
-  );
-
-  // Message for logged-in teacher
-  const teacherMessage = (
-    <div>
-      <h1>Welcome {username}!</h1>
-      <p>Please add some classes to our list, or view your current classes on your calendar.</p>
-    </div>
-  );
-
-  // Default message for not logged in
+const Hero = ({ toggleRegisterStudentForm, toggleRegisterTeacherForm, loggedIn, username, roles }) => {
   const defaultMessage = (
     <div>
       <h1>Music makes your life more vibrant, and your journey more unforgettable.</h1>
@@ -27,22 +10,22 @@ const Hero = ({ toggleRegisterStudentForm, toggleRegisterTeacherForm, loggedIn, 
     </div>
   );
 
-  // Determine message based on login status and role
-  const getMessage = () => {
-    if (loggedIn) {
-      if (role === 'ROLE_STUDENT') {
-        return studentMessage;
-      } else if (role === 'ROLE_TEACHER') {
-        return teacherMessage;
-      }
-    }
-    return defaultMessage;
-  };
+  const loggedInMessage = (
+    <div>
+      <h1>Welcome {username}!</h1>
+      {roles && roles.length > 0 && (
+        <p>Your role: {roles.map((role, index) => (
+          <span key={index}>{role}</span>
+        ))}</p>
+      )}
+      <p>Please check out lessons and your calendar.</p>
+    </div>
+  );
 
   return (
     <div className='hero container'>
       <div className='hero-text'>
-        {getMessage()}
+        {loggedIn ? loggedInMessage : defaultMessage}
         {!loggedIn && (
           <div>
             <button className='btn' onClick={toggleRegisterStudentForm}>Register as Student</button>

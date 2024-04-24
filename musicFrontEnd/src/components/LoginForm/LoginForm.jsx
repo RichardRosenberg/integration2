@@ -10,16 +10,17 @@ const LoginForm = ({ setLoggedIn, onLoginSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await axios.post('http://localhost:8081/auth/authenticate', {
         username,
         password
       });
-      console.log('Login successful!');
+      const token = response.data.token; 
+      console.log('Login successful! Token:', token);
       setVisible(false);
       setLoggedIn(true); 
-      onLoginSuccess();
+      onLoginSuccess(token); 
     } catch (error) {
       setError('Invalid username or password');
     }
