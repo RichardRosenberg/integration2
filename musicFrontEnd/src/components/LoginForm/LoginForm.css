@@ -1,0 +1,88 @@
+.page-container {
+  position: fixed;
+  top: 0;
+  left: 45rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-form {
+  position: relative;
+  width: 350px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.close-button {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid gray;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+.btn {
+  margin: 10px;
+}
+
+
+/* Screen size fixes */
+@media (max-width: 2000px) {
+  .page-container {
+    left: 40rem;
+  }
+}
+
+@media (max-width: 1700px) {
+  .page-container {
+    top: 30rem;
+    left: 0;
+  }
+}
