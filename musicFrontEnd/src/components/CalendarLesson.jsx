@@ -5,6 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css"
 import "react-datepicker/dist/react-datepicker.css";
 import { startOfWeek, getDay, parse, format  } from 'date-fns';
 import DatePicker from 'react-datepicker';
+import { jwtDecode } from "jwt-decode";
 
 
 const locales = {
@@ -22,10 +23,11 @@ const localizer = dateFnsLocalizer({
 
 
 
-const CalendarLesson = () => {
+const CalendarLesson = ({ token }) => {
 
     const [newEvent, setNewEvent] = useState({name:"", eStart: "", eEnd: ""})
     const [allEvents, setAllEvents] = useState([]);
+    const [isTeacher, setIsTeacher] = useState(false);
 
     const fetchLessons = () => {
       fetch("http://localhost:8081/lesson/getAll")
@@ -76,11 +78,26 @@ const CalendarLesson = () => {
           });
       };
 
+      useEffect(() => {
+        if (token) {
+          try {
+            const decodedToken = jwtDecode(token);
+            const decodedRoles = decodedToken.roles || [];
+            const isTeacher = decodedRoles.includes("ROLE_TEACHER");
+            console.log("isTeacher:", isTeacher); // Console log to show the value of isTeacher
+            setIsTeacher(isTeacher);
+          } catch (error) {
+            console.error("Error decoding token:", error);
+          }
+        }
+      }, [token]);
+
   return (
     <div className='lesson-container'>
         <h1 className='h1-not-home'>Calendar</h1>
-        <h2>Add New Lesson</h2>
+        {isTeacher && (        
         <div className='calendar'>
+          <h2>Add New Lesson</h2>
             <input type='text' placeholder='Add Title' style={{width: "20%", marginRight: "10px"}}
             value={newEvent.name} onChange={(e) => setNewEvent({...newEvent, name: e.target.value})}
             />
@@ -102,7 +119,8 @@ const CalendarLesson = () => {
             />
             <button style={{marginTop: "10px"}} onClick={handleAddEvent}>Add Lesson</button>
         </div>
-     <Calendar localizer={localizer} events={allEvents}   startAccessor={(event) => new Date(event.start)}
+        )}
+     <Calendar localizer={localizer} events={allEvents} views={['month', 'day']}  startAccessor={(event) => new Date(event.start)}
   endAccessor={(event) => new Date(event.end)} style={{height:500, margin:"50px"}}/>
 
     </div>

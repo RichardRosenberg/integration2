@@ -46,14 +46,16 @@ const Hero = ({
     <div className='hero container'>
       <div className='hero-text'>
         {loggedIn ? (
-          <div>
+          <div className='logged-text'>
             <h1>Welcome {username}!</h1>
             <p>
               Please check out 
-              <button className="link" onClick={toggleLessons}>Lessons</button> 
-              and 
-              <button className="link" onClick={toggleCalendar}>Calendar</button>.
+              {isTeacher && (
+              <button className="link" onClick={toggleLessons}>Lesson Manager</button> 
+             )}
+              <button className="link" onClick={toggleCalendar}>Lesson Calendar</button>
             </p>
+            <div>
             {showLessons && (
               <Lesson 
                 token={token} 
@@ -61,7 +63,13 @@ const Hero = ({
                 userId={userId} 
               />
             )}
-            {showCalendar && <Calendar />}
+            </div>
+            <div>
+            {showCalendar && <Calendar
+            token={token} 
+            roles={roles} 
+            userId={userId}/>}
+            </div>
           </div>
         ) : (
           <div>

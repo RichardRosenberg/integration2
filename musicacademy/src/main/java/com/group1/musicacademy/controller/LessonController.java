@@ -3,7 +3,6 @@ package com.group1.musicacademy.controller;
 import com.group1.musicacademy.model.Lesson;
 import com.group1.musicacademy.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,10 +42,10 @@ public class LessonController {
     public String updateLesson(@PathVariable int id, @RequestBody Lesson updatedLesson) {
         Lesson existingLesson = lessonService.getLessonById(id);
 
-            existingLesson.setName(updatedLesson.getName());
-            existingLesson.setStart(updatedLesson.getStart());
-            lessonService.saveLesson(existingLesson); 
-            return ("Lesson with id " + id + " is updated");
+        existingLesson.setTitle(updatedLesson.getTitle());
+        existingLesson.setStart(updatedLesson.getStart());
+        lessonService.saveLesson(existingLesson); // Save the updated lesson
+        return ("Lesson with id " + id + " is updated");
 
     }
 
